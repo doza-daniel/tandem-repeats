@@ -4,14 +4,21 @@ module Main where
 -- import Data.List
 -- import Lib
 
+import Data.List
 import qualified Data.Map as M
 
 
 main :: IO ()
-main = return ()
--- main = do
-    -- contents <- getContents
-    -- print $ reverse . sortOn snd . M.toList . M.filter (>5) . findAllOccurences "" $ buildSTree "actg$" contents
+main = do
+    contents <- getContents
+    print 
+        $ reverse . sortOn (length . fst)
+        $ M.toList
+        $ M.filter ((>0) . length)
+        $ M.mapWithKey (\key value -> (sort . concat) [[a,b] | a <- value, b <- value, a - b == length key]) 
+        $ M.filterWithKey (\key _ -> length key > 1)
+        $ findAll ""
+        $ build "actg$" contents
 
 
 data SuffixTree a = Leaf Int | Node [([a], SuffixTree a)] deriving (Show)
@@ -37,23 +44,16 @@ begginingWith a ss = [(ys, i) | (y:ys, i) <- ss, y == a]
 build :: String -> String -> SuffixTree Char
 build = lazyTree edge_pst
 
-countLeaves :: SuffixTree a -> (Int, [Int])
-countLeaves (Leaf i) = (1, [i])
-countLeaves (Node branches) = foldl (\(sum, starts) (i, beg) -> (sum + i, beg++starts)) (0, []) . map (countLeaves . snd) $ branches
+countLeaves :: SuffixTree a -> [Int]
+countLeaves (Leaf i) = [i]
+countLeaves (Node branches) = foldl (++) [] . map (countLeaves . snd) $ branches
 
-findAll :: String -> SuffixTree Char -> M.Map String (Int, [Int])
+findAll :: String -> SuffixTree Char -> M.Map String [Int]
 findAll _ (Leaf i) = M.empty
-findAll cword (Node branches) = M.unionsWith merge $ (M.fromListWith merge (parovi)):(map (uncurry findAll) (map ext branches))
+findAll cword (Node branches) = M.unionsWith (++) $ (M.fromListWith (++) (parovi)):(map (uncurry findAll) (map ext branches))
         where parovi = map (cnt . ext) branches
-              merge (a, b) (c, d) = (a + c, b ++ d)
               ext (label, subtree) = (cword ++ label, subtree)
               cnt (label, subtree) = (label, countLeaves subtree)
-
---parovi cword (Node branches) = map (cnt . ext) branches
---      where ext (label, subtree) = (cword ++ label, subtree)
---            cnt (label, subtree) = (label, countLeaves subtree)
---
---merge (a, b) (c, d) = (a + c, b ++ d)
 
 
 pretty' _ (Leaf i) = " -> Leaf " ++ show i
