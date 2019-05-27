@@ -27,7 +27,7 @@ library:
   source-dirs: src
 
 executables:
-  tandem-repeats-exe:
+  tandem-repeats:
     main:                Main.hs
     source-dirs:         app
     ghc-options:
