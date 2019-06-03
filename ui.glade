@@ -7,6 +7,9 @@
     <property name="height_request">500</property>
     <property name="can_focus">False</property>
     <child>
+      <placeholder/>
+    </child>
+    <child>
       <object class="GtkBox">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
@@ -29,6 +32,7 @@
                   <object class="GtkTextView" id="sequence_input">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
+                    <property name="wrap_mode">word</property>
                   </object>
                 </child>
               </object>
