@@ -1,5 +1,5 @@
 # tandem-repeats
 ```
-$ stack --local-bin-path=. install
-$ echo "actgactg$" | ./tandem-repeats
+$ stack build
+$ stack exec tandem-repeats
 ```
